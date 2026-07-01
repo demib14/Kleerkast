@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Kleerkast v0.7</title>
+  <title>Kleerkast v0.8</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
     </div>
     <h1>Kleerkast</h1>
     <p class="tagline">Jouw kleding, outfits en ideeën op één plek.</p>
-    <div class="version">Officiële testversie v0.7</div>
+    <div class="version">Officiële testversie v0.8</div>
   </div>
 
   <main>
@@ -32,10 +32,7 @@
           <button class="btn light" id="toggleAssistant">⌃</button>
         </div>
         <div class="assistant-body">
-          <div class="ask">
-            <input placeholder="Stel me een vraag...">
-            <button class="send">➤</button>
-          </div>
+          <div class="ask"><input placeholder="Stel me een vraag..."><button class="send">➤</button></div>
           <div class="chips">
             <button class="chip">Wat kan ik vandaag aantrekken?</button>
             <button class="chip">Toon outfits met groen</button>
@@ -45,22 +42,10 @@
       </div>
 
       <div class="cards">
-        <button class="homecard blue" data-screen="outfit">
-          <div class="head"><div class="circle">♙</div><div><h3>Nieuw ontwerp</h3><p>Stel een outfit samen</p></div></div>
-          <div class="photo design"></div>
-        </button>
-        <button class="homecard green" data-screen="closet">
-          <div class="head"><div class="circle">⌒</div><div><h3>Mijn kleding</h3><p>Bekijk en beheer je kleding</p></div></div>
-          <div class="photo closet"></div>
-        </button>
-        <button class="homecard pink" data-screen="saved">
-          <div class="head"><div class="circle">♡</div><div><h3>Outfits</h3><p>Bewaar en bekijk je combinaties</p></div></div>
-          <div class="photo outfits"></div>
-        </button>
-        <button class="homecard yellow" data-screen="categories">
-          <div class="head"><div class="circle">▣</div><div><h3>Categorieën</h3><p>Voeg zelf categorieën toe</p></div></div>
-          <div class="photo cats"></div>
-        </button>
+        <button class="homecard blue" data-screen="outfit"><div class="head"><div class="circle">♙</div><div><h3>Nieuw ontwerp</h3><p>Stel een outfit samen</p></div></div><div class="photo design"></div></button>
+        <button class="homecard green" data-screen="closet"><div class="head"><div class="circle">⌒</div><div><h3>Mijn kleding</h3><p>Bekijk en beheer je kleding</p></div></div><div class="photo closet"></div></button>
+        <button class="homecard pink" data-screen="saved"><div class="head"><div class="circle">♡</div><div><h3>Outfits</h3><p>Bewaar en bekijk je combinaties</p></div></div><div class="photo outfits"></div></button>
+        <button class="homecard yellow" data-screen="categories"><div class="head"><div class="circle">▣</div><div><h3>Categorieën</h3><p>Voeg zelf categorieën toe</p></div></div><div class="photo cats"></div></button>
       </div>
 
       <div class="section"><h2>Laatst gebruikt</h2><button class="link">Bekijk alles ›</button></div>
@@ -68,7 +53,7 @@
     </section>
 
     <section id="closet" class="screen">
-      <div class="panel"><h2>Mijn kleding</h2><p>Foto’s worden automatisch verkleind zodat je meerdere stukken kunt bewaren.</p></div>
+      <div class="panel"><h2>Mijn kleding</h2><p>Foto’s worden opgeslagen in de app-database, zodat meerdere foto’s per categorie mogelijk zijn.</p></div>
       <div id="closetList"></div>
     </section>
 
