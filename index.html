@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kleerkast</title>
+<style>
+:root{--bg:#f7f2ec;--card:#fff;--text:#26231f;--muted:#80766d;--line:#e8ddd2;--accent:#8f6f5f;--accent2:#6d5145}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);padding-bottom:88px}
+header{padding:22px 18px 14px;border-bottom:1px solid var(--line);background:#f7f2ec}
+h1{margin:0;font-size:26px}.sub{color:var(--muted);font-size:14px;margin-top:5px}
+main{padding:16px}.screen{display:none}.screen.active{display:block}
+.card,.tile,.item{background:var(--card);border-radius:22px;box-shadow:0 8px 24px rgba(80,55,40,.08)}
+.card{padding:18px;margin-bottom:15px}.card h2{margin:0 0 8px;font-size:21px}.card p{margin:0;color:var(--muted);line-height:1.45}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{border:0;padding:22px 16px;text-align:left;font-size:18px;color:var(--text);min-height:105px}
+.tile small{display:block;color:var(--muted);font-size:14px;margin-top:8px;line-height:1.3}
+.section{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 10px}.section h2{font-size:18px;margin:0}
+.btn{border:0;background:var(--accent);color:#fff;border-radius:999px;padding:11px 15px;font-weight:800;font-size:14px}
+.btn.light{background:#fff;color:var(--accent2);border:1px solid var(--line)}
+.row{display:flex;gap:12px;overflow-x:auto;padding:3px 2px 16px;scroll-snap-type:x mandatory}
+.item{min-width:160px;padding:10px;position:relative;scroll-snap-align:start}
+.item img{width:100%;height:185px;object-fit:cover;background:#efe4dc;border-radius:18px;display:block}
+.delete{position:absolute;top:14px;right:14px;border:0;background:rgba(255,255,255,.93);border-radius:999px;padding:5px 10px;font-size:18px}
+.empty{min-width:210px;background:#fff;border:1px dashed var(--line);border-radius:22px;padding:32px 16px;text-align:center;color:var(--muted)}
+.preview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.slot{height:152px;background:#fff;border:1px solid var(--line);border-radius:19px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--muted)}
+.slot img{width:100%;height:100%;object-fit:cover}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:10}
+nav button{border:0;background:transparent;color:var(--muted);font-size:12px;padding:7px 2px}
+nav span{display:block;font-weight:900;font-size:18px;margin-bottom:3px}
+nav button.active{color:var(--accent2);font-weight:900}
+input[type=file]{display:none}
+.note{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;color:var(--muted);font-size:14px;line-height:1.45}
+</style>
+</head>
+<body>
+<header><h1>Kleerkast</h1><div class="sub">Outfits samenstellen met je eigen kleding</div></header>
+<main>
+<section id="home" class="screen active">
+<div class="card"><h2>Welkom</h2><p>Een rustige testversie om kleding toe te voegen en combinaties te maken.</p></div>
+<div class="grid">
+<button class="tile" data-screen="closet">Mijn kleding<small>Foto’s toevoegen en bekijken</small></button>
+<button class="tile" data-screen="outfit">Outfit maken<small>Combineer stukken per rij</small></button>
+<button class="tile" data-screen="wish">Twijfelstuk<small>Bewaar mogelijke aankopen</small></button>
+<button class="tile" data-screen="saved">Opgeslagen<small>Bekijk bewaarde outfits</small></button>
+</div>
+</section>
+<section id="closet" class="screen"><div class="card"><h2>Mijn kleding</h2><p>Voeg per categorie foto’s toe. Swipe horizontaal door je kleding.</p></div><div id="closetList"></div></section>
+<section id="outfit" class="screen"><div class="card"><h2>Outfit maken</h2><p>Tik op kledingstukken in de rijen hieronder.</p><div class="preview"><div class="slot" id="slot-tops">Top</div><div class="slot" id="slot-bottoms">Onderstuk</div><div class="slot" id="slot-shoes">Schoenen</div><div class="slot" id="slot-bags">Tas</div></div><div class="actions"><button class="btn" id="saveOutfitBtn">Outfit bewaren</button><button class="btn light" id="clearBtn">Wissen</button></div></div><div id="outfitRows"></div></section>
+<section id="wish" class="screen"><div class="card"><h2>Twijfelstuk</h2><p>Voeg een foto of screenshot toe van iets dat je misschien wilt kopen.</p></div><div class="section"><h2>Mogelijke aankopen</h2><button class="btn addBtn" data-cat="wishitems">Foto toevoegen</button></div><input id="file-wishitems" type="file" accept="image/*"><div id="wishRow" class="row"></div><div class="note">Later bouwen we hier: “Past dit bij mijn kast?”</div></section>
+<section id="saved" class="screen"><div class="card"><h2>Opgeslagen outfits</h2><p>Hier komen de outfits die je bewaart.</p></div><div id="savedList"></div></section>
+</main>
+<nav><button class="nav active" data-screen="home"><span>H</span>Home</button><button class="nav" data-screen="closet"><span>K</span>Kleding</button><button class="nav" data-screen="outfit"><span>O</span>Outfit</button><button class="nav" data-screen="wish"><span>T</span>Twijfel</button></nav>
+<script>
+var cats=[['tops','Tops'],['bottoms','Broeken en rokken'],['dresses','Jurken'],['jackets','Jassen'],['shoes','Schoenen'],['bags','Tassen'],['accessories','Accessoires']];
+var data; try{data=JSON.parse(localStorage.getItem('kleerkast_v1')||'{}')}catch(e){data={}}
+cats.forEach(function(c){if(!data[c[0]])data[c[0]]=[]}); if(!data.wishitems)data.wishitems=[]; if(!data.outfits)data.outfits=[];
+var selected={tops:null,bottoms:null,shoes:null,bags:null};
+function save(){localStorage.setItem('kleerkast_v1',JSON.stringify(data))}
+function show(screen){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(screen).classList.add('active');document.querySelectorAll('.nav').forEach(function(n){n.classList.toggle('active',n.getAttribute('data-screen')===screen)});render()}
+function addListeners(){document.querySelectorAll('[data-screen]').forEach(function(btn){btn.onclick=function(){show(btn.getAttribute('data-screen'))}});document.getElementById('saveOutfitBtn').onclick=saveOutfit;document.getElementById('clearBtn').onclick=clearSlots}
+function pick(cat){var input=document.getElementById('file-'+cat); if(input)input.click()}
+function handleFile(cat,file){if(!file)return;var reader=new FileReader();reader.onload=function(){data[cat].push({id:Date.now()+Math.random(),src:reader.result});save();render()};reader.readAsDataURL(file)}
+function removeItem(cat,id){var used=data.outfits.filter(function(o){return Object.values(o.items).indexOf(id)>-1});if(used.length&&!confirm('Dit kledingstuk zit in '+used.length+' outfit(s). Toch verwijderen?'))return;data[cat]=data[cat].filter(function(x){return x.id!==id});save();render()}
+function select(cat,id,src){if(!(cat in selected))return;selected[cat]=id;document.getElementById('slot-'+cat).innerHTML='<img src="'+src+'">'}
+function clearSlots(){selected={tops:null,bottoms:null,shoes:null,bags:null};document.getElementById('slot-tops').textContent='Top';document.getElementById('slot-bottoms').textContent='Onderstuk';document.getElementById('slot-shoes').textContent='Schoenen';document.getElementById('slot-bags').textContent='Tas'}
+function saveOutfit(){if(!Object.values(selected).some(Boolean)){alert('Kies eerst minstens één kledingstuk.');return}data.outfits.push({id:Date.now(),date:new Date().toLocaleDateString('nl-BE'),items:Object.assign({},selected)});save();alert('Outfit bewaard');render()}
+function findImg(id){for(var i=0;i<cats.length;i++){var arr=data[cats[i][0]];for(var j=0;j<arr.length;j++){if(arr[j].id===id)return arr[j].src}}return null}
+function card(cat,item,selectable){var d=document.createElement('div');d.className='item';var img=document.createElement('img');img.src=item.src;d.appendChild(img);if(selectable)d.onclick=function(){select(cat,item.id,item.src)};var b=document.createElement('button');b.className='delete';b.textContent='×';b.onclick=function(e){e.stopPropagation();removeItem(cat,item.id)};d.appendChild(b);return d}
+function makeRow(cat,selectable){var row=document.createElement('div');row.className='row';if(!data[cat].length){var e=document.createElement('div');e.className='empty';e.textContent='Nog geen foto’s';row.appendChild(e)}else{data[cat].forEach(function(item){row.appendChild(card(cat,item,selectable))})}return row}
+function render(){var closet=document.getElementById('closetList');closet.innerHTML='';cats.forEach(function(c){var sec=document.createElement('div');sec.className='section';var h=document.createElement('h2');h.textContent=c[1];sec.appendChild(h);var btn=document.createElement('button');btn.className='btn';btn.textContent='Foto toevoegen';btn.onclick=function(){pick(c[0])};sec.appendChild(btn);closet.appendChild(sec);var input=document.createElement('input');input.type='file';input.accept='image/*';input.id='file-'+c[0];input.onchange=function(e){handleFile(c[0],e.target.files[0]);e.target.value=''};closet.appendChild(input);closet.appendChild(makeRow(c[0],false))});var outfit=document.getElementById('outfitRows');outfit.innerHTML='';['tops','bottoms','shoes','bags'].forEach(function(id){var label=cats.find(function(c){return c[0]===id})[1];var sec=document.createElement('div');sec.className='section';var h=document.createElement('h2');h.textContent=label;sec.appendChild(h);outfit.appendChild(sec);outfit.appendChild(makeRow(id,true))});var wish=document.getElementById('wishRow');wish.innerHTML='';if(!data.wishitems.length){var e=document.createElement('div');e.className='empty';e.textContent='Nog geen foto’s';wish.appendChild(e)}else data.wishitems.forEach(function(item){wish.appendChild(card('wishitems',item,false))});var saved=document.getElementById('savedList');saved.innerHTML='';if(!data.outfits.length){var em=document.createElement('div');em.className='empty';em.textContent='Nog geen outfits bewaard';saved.appendChild(em)}else data.outfits.forEach(function(o,i){var box=document.createElement('div');box.className='card';var h=document.createElement('h2');h.textContent='Outfit '+(i+1);box.appendChild(h);var p=document.createElement('p');p.textContent='Bewaard op '+o.date;box.appendChild(p);var row=document.createElement('div');row.className='row';Object.values(o.items).forEach(function(id){var src=findImg(id);if(src){var it=document.createElement('div');it.className='item';var im=document.createElement('img');im.src=src;it.appendChild(im);row.appendChild(it)}});box.appendChild(row);saved.appendChild(box)});var wi=document.getElementById('file-wishitems');wi.onchange=function(e){handleFile('wishitems',e.target.files[0]);e.target.value=''};document.querySelectorAll('.addBtn').forEach(function(b){b.onclick=function(){pick(b.getAttribute('data-cat'))}})}
+addListeners();render();
+</script>
+</body>
+</html>
