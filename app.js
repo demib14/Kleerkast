@@ -14,7 +14,7 @@ let db;
 
 function openDB(){
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('kleerkast_v08_db', 1);
+    const req = indexedDB.open('kleerkast_v09_db', 1);
     req.onupgradeneeded = e => {
       const database = e.target.result;
       if(!database.objectStoreNames.contains('state')){
@@ -47,13 +47,8 @@ function setState(){
 }
 
 async function save(){
-  try{
-    await setState();
-    return true;
-  } catch(e){
-    alert('Opslaan lukte niet. De app-database kon niet schrijven.');
-    return false;
-  }
+  try { await setState(); return true; }
+  catch(e){ alert('Opslaan lukte niet.'); return false; }
 }
 
 function initData(loaded){
@@ -77,8 +72,7 @@ function resizeImage(file, maxSize = 900, quality = 0.7){
         w = Math.round(w * scale);
         h = Math.round(h * scale);
         const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
+        canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         resolve(canvas.toDataURL('image/jpeg', quality));
       };
@@ -105,8 +99,7 @@ async function handleFile(cat, file){
   if(!file) return;
   try{
     const src = await resizeImage(file);
-    const newItem = {id:Date.now()+Math.random(), src};
-    data[cat].push(newItem);
+    data[cat].push({id:Date.now()+Math.random(), src});
     await save();
     render();
   } catch(e){
@@ -322,6 +315,7 @@ async function init(){
   const loaded = await getState();
   initData(loaded);
   document.querySelectorAll('[data-screen]').forEach(b => b.onclick = () => show(b.dataset.screen));
+  document.getElementById('settingsBtn').onclick = () => show('settings');
   document.getElementById('toggleAssistant').onclick = function(){
     document.getElementById('assistantBox').classList.toggle('collapsed');
     this.textContent = document.getElementById('assistantBox').classList.contains('collapsed') ? '⌄' : '⌃';
@@ -330,6 +324,7 @@ async function init(){
   document.getElementById('clearBtn').onclick = clearSlots;
   document.getElementById('wishBtn').onclick = () => pick('wishitems');
   document.getElementById('addCategoryBtn').onclick = addCategory;
+  document.getElementById('addCategoryFromClosetBtn').onclick = addCategory;
   render();
 }
 

@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Kleerkast v0.8</title>
+  <title>Kleerkast v0.9</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="hero">
     <div class="topbar">
-      <button class="iconbtn">☰</button>
+      <button class="iconbtn" id="settingsBtn">☰</button>
       <div class="righticons">
         <button class="iconbtn">⌕</button>
         <button class="iconbtn">♡</button>
@@ -17,7 +17,7 @@
     </div>
     <h1>Kleerkast</h1>
     <p class="tagline">Jouw kleding, outfits en ideeën op één plek.</p>
-    <div class="version">Officiële testversie v0.8</div>
+    <div class="version">Officiële testversie v0.9</div>
   </div>
 
   <main>
@@ -42,10 +42,22 @@
       </div>
 
       <div class="cards">
-        <button class="homecard blue" data-screen="outfit"><div class="head"><div class="circle">♙</div><div><h3>Nieuw ontwerp</h3><p>Stel een outfit samen</p></div></div><div class="photo design"></div></button>
-        <button class="homecard green" data-screen="closet"><div class="head"><div class="circle">⌒</div><div><h3>Mijn kleding</h3><p>Bekijk en beheer je kleding</p></div></div><div class="photo closet"></div></button>
-        <button class="homecard pink" data-screen="saved"><div class="head"><div class="circle">♡</div><div><h3>Outfits</h3><p>Bewaar en bekijk je combinaties</p></div></div><div class="photo outfits"></div></button>
-        <button class="homecard yellow" data-screen="categories"><div class="head"><div class="circle">▣</div><div><h3>Categorieën</h3><p>Voeg zelf categorieën toe</p></div></div><div class="photo cats"></div></button>
+        <button class="homecard green" data-screen="closet">
+          <div class="head"><div class="circle">⌒</div><div><h3>Mijn kast</h3><p>Bekijk en beheer je kleding</p></div></div>
+          <div class="photo closet"></div>
+        </button>
+        <button class="homecard blue" data-screen="outfit">
+          <div class="head"><div class="circle">♙</div><div><h3>Nieuwe outfit</h3><p>Stel een outfit samen</p></div></div>
+          <div class="photo design"></div>
+        </button>
+        <button class="homecard pink" data-screen="saved">
+          <div class="head"><div class="circle">♡</div><div><h3>Outfits</h3><p>Bewaar en bekijk je combinaties</p></div></div>
+          <div class="photo outfits"></div>
+        </button>
+        <button class="homecard yellow" data-screen="wish">
+          <div class="head"><div class="circle">☆</div><div><h3>Nieuwe aankoop</h3><p>Bewaar twijfels en ideeën</p></div></div>
+          <div class="photo purchase"></div>
+        </button>
       </div>
 
       <div class="section"><h2>Laatst gebruikt</h2><button class="link">Bekijk alles ›</button></div>
@@ -53,13 +65,20 @@
     </section>
 
     <section id="closet" class="screen">
-      <div class="panel"><h2>Mijn kleding</h2><p>Foto’s worden opgeslagen in de app-database, zodat meerdere foto’s per categorie mogelijk zijn.</p></div>
+      <div class="panel greenpanel">
+        <h2>Mijn kast</h2>
+        <p>Voeg foto’s toe per categorie. Swipe horizontaal door je kleding.</p>
+        <div class="actions">
+          <button class="btn" id="addCategoryFromClosetBtn">Categorie toevoegen</button>
+          <button class="btn light" data-screen="settings">Beheer categorieën</button>
+        </div>
+      </div>
       <div id="closetList"></div>
     </section>
 
     <section id="outfit" class="screen">
-      <div class="panel">
-        <h2>Nieuw ontwerp</h2>
+      <div class="panel bluepanel">
+        <h2>Nieuwe outfit</h2>
         <p>Tik op kledingstukken in de rijen hieronder.</p>
         <div class="preview">
           <div class="slot" id="slot-tops">Top</div>
@@ -76,31 +95,31 @@
     </section>
 
     <section id="saved" class="screen">
-      <div class="panel"><h2>Outfits</h2><p>Hier staan je bewaarde combinaties.</p></div>
+      <div class="panel pinkpanel"><h2>Outfits</h2><p>Hier staan je bewaarde combinaties.</p></div>
       <div id="savedList"></div>
     </section>
 
-    <section id="categories" class="screen">
-      <div class="panel"><h2>Categorieën</h2><p>Voeg zelf categorieën toe.</p></div>
+    <section id="wish" class="screen">
+      <div class="panel yellowpanel"><h2>Nieuwe aankoop</h2><p>Bewaar foto’s van kleding die je misschien wilt kopen.</p></div>
+      <div class="section"><h2>Twijfels</h2><button class="btn" id="wishBtn">Foto toevoegen</button></div>
+      <input id="file-wishitems" type="file" accept="image/*">
+      <div id="wishRow" class="row"></div>
+    </section>
+
+    <section id="settings" class="screen">
+      <div class="panel"><h2>Instellingen</h2><p>Beheer hier je kledingcategorieën. Dit staat niet meer als hoofdkaart op Home.</p></div>
       <button class="btn" id="addCategoryBtn">Nieuwe categorie toevoegen</button>
       <div class="spacer"></div>
       <div id="categoryList"></div>
-    </section>
-
-    <section id="wish" class="screen">
-      <div class="panel"><h2>Twijfelstuk</h2><p>Bewaar foto’s van kleding die je misschien wilt kopen.</p></div>
-      <div class="section"><h2>Mogelijke aankopen</h2><button class="btn" id="wishBtn">Foto toevoegen</button></div>
-      <input id="file-wishitems" type="file" accept="image/*">
-      <div id="wishRow" class="row"></div>
     </section>
   </main>
 
   <nav>
     <button class="nav active" data-screen="home"><span>⌂</span>Home</button>
-    <button class="nav" data-screen="closet"><span>⌒</span>Kleding</button>
-    <button class="nav" data-screen="outfit"><span>♙</span>Ontwerp</button>
-    <button class="nav" data-screen="categories"><span>▣</span>Categorieën</button>
-    <button class="nav" data-screen="wish"><span>☆</span>Twijfelstuk</button>
+    <button class="nav" data-screen="closet"><span>⌒</span>Mijn kast</button>
+    <button class="nav" data-screen="outfit"><span>♙</span>Nieuwe outfit</button>
+    <button class="nav" data-screen="saved"><span>♡</span>Outfits</button>
+    <button class="nav" data-screen="wish"><span>☆</span>Nieuwe aankoop</button>
   </nav>
 
   <script src="app.js"></script>
