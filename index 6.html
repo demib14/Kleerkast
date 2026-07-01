@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kleerkast</title>
+<style>
+:root{
+  --bg:#f6f1eb; --card:#fffdfa; --text:#211d1a; --muted:#786f68; --line:#e6dcd2;
+  --blue:#dbeaf8; --green:#dcefe0; --pink:#f7dfe3; --yellow:#f7e8bf; --brown:#9a7651;
+  --shadow:0 18px 40px rgba(61,43,31,.13);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  background:linear-gradient(180deg,#f7f1ea,#fffaf5);
+  color:var(--text);
+  padding-bottom:92px;
+}
+.hero{
+  min-height:360px;
+  padding:24px 22px 20px;
+  background:
+    linear-gradient(90deg,rgba(246,241,235,.96) 0%,rgba(246,241,235,.84) 43%,rgba(246,241,235,.30) 100%),
+    url("https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1600&q=80");
+  background-size:cover;
+  background-position:center right;
+  border-bottom:1px solid var(--line);
+}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start}
+.menu,.iconbtn{
+  width:54px;height:54px;border:0;border-radius:16px;background:rgba(255,255,255,.86);
+  box-shadow:0 8px 22px rgba(60,40,30,.10);font-size:24px;color:#201d19
+}
+.righticons{display:flex;gap:14px}
+h1{font-family:Georgia,serif;font-size:58px;line-height:.95;margin:42px 0 10px;letter-spacing:-2px}
+.tagline{font-family:Georgia,serif;font-size:21px;margin:0;color:#201d19}
+.greeting{font-family:Georgia,serif;font-size:24px;margin-top:62px}
+main{padding:0 18px 24px;margin-top:-12px}
+.screen{display:none}.screen.active{display:block}
+.assistant{
+  background:rgba(255,253,250,.91);backdrop-filter:blur(14px);
+  border:1px solid rgba(230,220,210,.8);border-radius:26px;padding:18px;
+  box-shadow:var(--shadow);margin-bottom:18px;
+}
+.assistant-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bot{width:54px;height:54px;border-radius:18px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#477b50;font-weight:900}
+.assistant h2{font-family:Georgia,serif;font-size:27px;margin:4px 0 2px}
+.assistant small{color:var(--muted)}
+.assistant-body{display:block;margin-top:14px}
+.assistant.collapsed .assistant-body{display:none}
+.ask{display:flex;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px;margin-bottom:12px}
+.ask input{display:block;flex:1;border:0;outline:none;font-size:15px;background:transparent;padding:8px}
+.send{border:0;background:#9fb58f;color:white;border-radius:999px;width:38px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:13px;color:#504943}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.homecard{
+  border:0;border-radius:25px;padding:18px;background:var(--card);box-shadow:var(--shadow);
+  text-align:left;overflow:hidden;color:var(--text);min-height:270px
+}
+.homecard.blue{background:linear-gradient(135deg,var(--blue),#fffdfa)}
+.homecard.green{background:linear-gradient(135deg,var(--green),#fffdfa)}
+.homecard.pink{background:linear-gradient(135deg,var(--pink),#fffdfa)}
+.homecard.yellow{background:linear-gradient(135deg,var(--yellow),#fffdfa)}
+.homecard .head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.circle{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;background:rgba(255,255,255,.65)}
+.homecard h3{font-family:Georgia,serif;font-size:25px;margin:0 0 4px}.homecard p{margin:0;color:#514a44;font-size:15px;line-height:1.35}
+.photo{
+  height:170px;border-radius:17px;margin-top:16px;background-size:cover;background-position:center;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)
+}
+.photo.design{background-image:url("https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=900&q=80")}
+.photo.closet{background-image:url("https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80")}
+.photo.outfits{background-image:url("https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80")}
+.photo.cats{background-image:url("https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=900&q=80")}
+.section{display:flex;justify-content:space-between;align-items:center;margin:24px 2px 12px}
+.section h2{font-family:Georgia,serif;font-size:25px;margin:0}.link{border:0;background:transparent;color:#5d544d;font-size:15px}
+.panel,.piece,.catrow{background:var(--card);border-radius:24px;box-shadow:var(--shadow)}
+.panel{padding:18px;margin-bottom:16px}
+.panel h2{font-family:Georgia,serif;font-size:28px;margin:0 0 8px}.panel p{margin:0;color:var(--muted);line-height:1.4}
+.btn{border:0;background:var(--brown);color:#fff;border-radius:999px;padding:11px 15px;font-weight:800}
+.btn.light{background:#fff;color:var(--brown);border:1px solid var(--line)}
+.row{display:flex;gap:12px;overflow-x:auto;padding:3px 2px 16px;scroll-snap-type:x mandatory}
+.piece{min-width:160px;padding:10px;position:relative;scroll-snap-align:start}
+.piece img{width:100%;height:185px;object-fit:cover;border-radius:18px;background:#efe4dc;display:block}
+.delete{position:absolute;top:14px;right:14px;border:0;background:rgba(255,255,255,.92);border-radius:999px;padding:5px 10px;font-size:18px}
+.empty{min-width:210px;border:1px dashed var(--line);border-radius:22px;padding:32px 16px;color:var(--muted);text-align:center;background:#fff}
+.preview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.slot{height:154px;background:#fff;border:1px solid var(--line);border-radius:20px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--muted)}
+.slot img{width:100%;height:100%;object-fit:cover}
+.catrow{display:flex;align-items:center;justify-content:space-between;padding:15px;margin-bottom:10px}
+.dot{width:34px;height:34px;border-radius:12px;margin-right:12px}.catleft{display:flex;align-items:center;font-weight:700}
+nav{
+  position:fixed;left:0;right:0;bottom:0;background:rgba(255,253,250,.95);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);
+  padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:10
+}
+nav button{border:0;background:transparent;color:#79716a;font-size:12px;padding:7px 2px}
+nav span{display:block;font-size:23px;margin-bottom:3px}nav button.active{color:#8b633d;font-weight:900}
+input[type=file]{display:none}
+@media(max-width:700px){
+  h1{font-size:46px}.hero{min-height:330px}.cards{grid-template-columns:1fr}.homecard{min-height:240px}
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="topbar">
+    <button class="menu">☰</button>
+    <div class="righticons"><button class="iconbtn">⌕</button><button class="iconbtn">♡</button></div>
+  </div>
+  <h1>Kleerkast</h1>
+  <p class="tagline">Jouw kleding, outfits en ideeën op één plek.</p>
+  <div class="greeting">Goedemorgen Demi ☀️</div>
+</div>
+
+<main>
+<section id="home" class="screen active">
+  <div class="assistant" id="assistantBox">
+    <div class="assistant-head">
+      <div class="bot">AI</div>
+      <div style="flex:1">
+        <small>Hallo Demi</small>
+        <h2>Hoe kan ik je vandaag helpen?</h2>
+      </div>
+      <button class="btn light" id="toggleAssistant">⌃</button>
+    </div>
+    <div class="assistant-body">
+      <div class="ask"><input placeholder="Stel me een vraag..."><button class="send">➤</button></div>
+      <div class="chips">
+        <button class="chip">Wat kan ik vandaag aantrekken?</button>
+        <button class="chip">Toon outfits met groen</button>
+        <button class="chip">Wat past goed bij beige?</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <button class="homecard blue" data-screen="outfit"><div class="head"><div class="circle">♙</div><div><h3>Nieuw ontwerp</h3><p>Stel een outfit samen</p></div></div><div class="photo design"></div></button>
+    <button class="homecard green" data-screen="closet"><div class="head"><div class="circle">⌒</div><div><h3>Mijn kleding</h3><p>Bekijk en beheer je kleding</p></div></div><div class="photo closet"></div></button>
+    <button class="homecard pink" data-screen="saved"><div class="head"><div class="circle">♡</div><div><h3>Outfits</h3><p>Bewaar en bekijk je combinaties</p></div></div><div class="photo outfits"></div></button>
+    <button class="homecard yellow" data-screen="categories"><div class="head"><div class="circle">▣</div><div><h3>Categorieën</h3><p>Voeg zelf categorieën toe</p></div></div><div class="photo cats"></div></button>
+  </div>
+
+  <div class="section"><h2>Laatst gebruikt</h2><button class="link">Bekijk alles ›</button></div>
+  <div id="recentRow" class="row"></div>
+</section>
+
+<section id="closet" class="screen"><div class="panel"><h2>Mijn kleding</h2><p>Voeg foto’s toe per categorie. Swipe horizontaal door je kleding.</p></div><div id="closetList"></div></section>
+
+<section id="outfit" class="screen">
+<div class="panel"><h2>Nieuw ontwerp</h2><p>Tik op kledingstukken in de rijen hieronder.</p>
+<div class="preview"><div class="slot" id="slot-tops">Top</div><div class="slot" id="slot-bottoms">Onderstuk</div><div class="slot" id="slot-shoes">Schoenen</div><div class="slot" id="slot-bags">Tas</div></div>
+<div style="display:flex;gap:8px;margin-top:12px"><button class="btn" id="saveOutfitBtn">Outfit bewaren</button><button class="btn light" id="clearBtn">Wissen</button></div></div><div id="outfitRows"></div></section>
+
+<section id="saved" class="screen"><div class="panel"><h2>Outfits</h2><p>Hier staan je bewaarde combinaties.</p></div><div id="savedList"></div></section>
+
+<section id="categories" class="screen">
+<div class="panel"><h2>Categorieën</h2><p>Voeg zelf categorieën toe, bijvoorbeeld Festival, Werk, Zwangerschap of Sport.</p></div>
+<button class="btn" id="addCategoryBtn">Nieuwe categorie toevoegen</button>
+<div style="height:14px"></div><div id="categoryList"></div>
+</section>
+
+<section id="wish" class="screen"><div class="panel"><h2>Twijfelstuk</h2><p>Bewaar foto’s van kleding die je misschien wilt kopen.</p></div><div class="section"><h2>Mogelijke aankopen</h2><button class="btn" id="wishBtn">Foto toevoegen</button></div><input id="file-wishitems" type="file" accept="image/*"><div id="wishRow" class="row"></div></section>
+</main>
+
+<nav>
+<button class="nav active" data-screen="home"><span>⌂</span>Home</button>
+<button class="nav" data-screen="closet"><span>⌒</span>Kleding</button>
+<button class="nav" data-screen="outfit"><span>♙</span>Ontwerp</button>
+<button class="nav" data-screen="categories"><span>▣</span>Categorieën</button>
+<button class="nav" data-screen="wish"><span>☆</span>Twijfelstuk</button>
+</nav>
+
+<script>
+var defaultCats=[['tops','Tops','#dcf4e6'],['bottoms','Broeken en rokken','#d9ecff'],['dresses','Jurken','#ffe1e9'],['jackets','Jassen','#fff0c9'],['shoes','Schoenen','#eadfff'],['bags','Tassen','#f1dfd2'],['accessories','Accessoires','#e8f0ff']];
+var data;try{data=JSON.parse(localStorage.getItem('kleerkast_dressing')||'{}')}catch(e){data={}}
+if(!data.categories)data.categories=defaultCats.map(c=>({id:c[0],name:c[1],color:c[2]}));
+data.categories.forEach(c=>{if(!data[c.id])data[c.id]=[]});if(!data.wishitems)data.wishitems=[];if(!data.outfits)data.outfits=[];
+var selected={tops:null,bottoms:null,shoes:null,bags:null};
+function save(){localStorage.setItem('kleerkast_dressing',JSON.stringify(data))}
+function show(screen){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(screen).classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===screen));window.scrollTo(0,0);render()}
+document.querySelectorAll('[data-screen]').forEach(b=>b.onclick=()=>show(b.dataset.screen));
+document.getElementById('toggleAssistant').onclick=function(){document.getElementById('assistantBox').classList.toggle('collapsed');this.textContent=document.getElementById('assistantBox').classList.contains('collapsed')?'⌄':'⌃'}
+function pick(cat){document.getElementById('file-'+cat)?.click()}
+function handleFile(cat,file){if(!file)return;var r=new FileReader();r.onload=function(){data[cat].push({id:Date.now()+Math.random(),src:r.result});save();render()};r.readAsDataURL(file)}
+function removeItem(cat,id){var used=data.outfits.filter(o=>Object.values(o.items).includes(id));if(used.length&&!confirm('Dit kledingstuk zit in '+used.length+' outfit(s). Toch verwijderen?'))return;data[cat]=data[cat].filter(x=>x.id!==id);save();render()}
+function select(cat,id,src){if(!(cat in selected))return;selected[cat]=id;document.getElementById('slot-'+cat).innerHTML='<img src="'+src+'">'}
+function clearSlots(){selected={tops:null,bottoms:null,shoes:null,bags:null};['tops','bottoms','shoes','bags'].forEach(c=>document.getElementById('slot-'+c).textContent={tops:'Top',bottoms:'Onderstuk',shoes:'Schoenen',bags:'Tas'}[c])}
+function saveOutfit(){if(!Object.values(selected).some(Boolean)){alert('Kies eerst minstens één kledingstuk.');return}data.outfits.push({id:Date.now(),date:new Date().toLocaleDateString('nl-BE'),items:Object.assign({},selected)});save();alert('Outfit bewaard');render()}
+function findImg(id){for(var c of data.categories){for(var item of data[c.id])if(item.id===id)return item.src}return null}
+function card(cat,item,sel){var d=document.createElement('div');d.className='piece';var img=document.createElement('img');img.src=item.src;d.appendChild(img);if(sel)d.onclick=()=>select(cat,item.id,item.src);var x=document.createElement('button');x.className='delete';x.textContent='×';x.onclick=e=>{e.stopPropagation();removeItem(cat,item.id)};d.appendChild(x);return d}
+function row(cat,sel){var r=document.createElement('div');r.className='row';if(!data[cat].length){var e=document.createElement('div');e.className='empty';e.textContent='Nog geen foto’s';r.appendChild(e)}else data[cat].forEach(i=>r.appendChild(card(cat,i,sel)));return r}
+function render(){
+ var cl=document.getElementById('closetList');cl.innerHTML='';data.categories.forEach(c=>{var s=document.createElement('div');s.className='section';s.innerHTML='<h2>'+c.name+'</h2>';var b=document.createElement('button');b.className='btn';b.textContent='Foto toevoegen';b.onclick=()=>pick(c.id);s.appendChild(b);cl.appendChild(s);var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='file-'+c.id;inp.onchange=e=>{handleFile(c.id,e.target.files[0]);e.target.value=''};cl.appendChild(inp);cl.appendChild(row(c.id,false))});
+ var out=document.getElementById('outfitRows');out.innerHTML='';['tops','bottoms','shoes','bags'].forEach(id=>{var c=data.categories.find(x=>x.id===id);if(!c)return;var s=document.createElement('div');s.className='section';s.innerHTML='<h2>'+c.name+'</h2>';out.appendChild(s);out.appendChild(row(id,true))});
+ var ca=document.getElementById('categoryList');ca.innerHTML='';data.categories.forEach(c=>{var div=document.createElement('div');div.className='catrow';div.innerHTML='<div class="catleft"><div class="dot" style="background:'+c.color+'"></div>'+c.name+'</div><span>•••</span>';ca.appendChild(div)});
+ var w=document.getElementById('wishRow');w.innerHTML='';if(!data.wishitems.length){var e=document.createElement('div');e.className='empty';e.textContent='Nog geen foto’s';w.appendChild(e)}else data.wishitems.forEach(i=>w.appendChild(card('wishitems',i,false)));
+ var sl=document.getElementById('savedList');sl.innerHTML='';if(!data.outfits.length){var em=document.createElement('div');em.className='empty';em.textContent='Nog geen outfits bewaard';sl.appendChild(em)}else data.outfits.forEach((o,i)=>{var box=document.createElement('div');box.className='panel';box.innerHTML='<h2>Outfit '+(i+1)+'</h2><p>Bewaard op '+o.date+'</p>';var rr=document.createElement('div');rr.className='row';Object.values(o.items).forEach(id=>{var src=findImg(id);if(src){var it=document.createElement('div');it.className='piece';it.innerHTML='<img src="'+src+'">';rr.appendChild(it)}});box.appendChild(rr);sl.appendChild(box)});
+ var recent=document.getElementById('recentRow');recent.innerHTML='';var imgs=[];data.outfits.slice(-4).forEach(o=>Object.values(o.items).forEach(id=>{var src=findImg(id);if(src)imgs.push(src)}));if(!imgs.length){['Werk outfit','Weekend','Date night','Zondag casual'].forEach((t,i)=>{var e=document.createElement('div');e.className='empty';e.style.minWidth='220px';e.textContent=t;recent.appendChild(e)})}else imgs.slice(0,4).forEach(src=>{var it=document.createElement('div');it.className='piece';it.innerHTML='<img src="'+src+'">';recent.appendChild(it)});
+ document.getElementById('file-wishitems').onchange=e=>{handleFile('wishitems',e.target.files[0]);e.target.value=''};
+}
+document.getElementById('saveOutfitBtn').onclick=saveOutfit;document.getElementById('clearBtn').onclick=clearSlots;document.getElementById('wishBtn').onclick=()=>pick('wishitems');
+document.getElementById('addCategoryBtn').onclick=function(){var name=prompt('Naam van nieuwe categorie?');if(!name)return;var id='cat_'+Date.now();var colors=['#d9ecff','#dcf4e6','#ffe1e9','#fff0c9','#eadfff','#f1dfd2'];data.categories.push({id:id,name:name,color:colors[data.categories.length%colors.length]});data[id]=[];save();render()}
+render();
+</script>
+</body>
+</html>
