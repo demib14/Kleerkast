@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Kleerkast v0.9</title>
+  <title>Kleerkast v1.0</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
     </div>
     <h1>Kleerkast</h1>
     <p class="tagline">Jouw kleding, outfits en ideeën op één plek.</p>
-    <div class="version">Officiële testversie v0.9</div>
+    <div class="version">Officiële testversie v1.0</div>
   </div>
 
   <main>
@@ -42,22 +42,10 @@
       </div>
 
       <div class="cards">
-        <button class="homecard green" data-screen="closet">
-          <div class="head"><div class="circle">⌒</div><div><h3>Mijn kast</h3><p>Bekijk en beheer je kleding</p></div></div>
-          <div class="photo closet"></div>
-        </button>
-        <button class="homecard blue" data-screen="outfit">
-          <div class="head"><div class="circle">♙</div><div><h3>Nieuwe outfit</h3><p>Stel een outfit samen</p></div></div>
-          <div class="photo design"></div>
-        </button>
-        <button class="homecard pink" data-screen="saved">
-          <div class="head"><div class="circle">♡</div><div><h3>Outfits</h3><p>Bewaar en bekijk je combinaties</p></div></div>
-          <div class="photo outfits"></div>
-        </button>
-        <button class="homecard yellow" data-screen="wish">
-          <div class="head"><div class="circle">☆</div><div><h3>Nieuwe aankoop</h3><p>Bewaar twijfels en ideeën</p></div></div>
-          <div class="photo purchase"></div>
-        </button>
+        <button class="homecard green" data-screen="closet"><div class="head"><div class="circle">⌒</div><div><h3>Mijn kast</h3><p>Bekijk en beheer je kleding</p></div></div><div class="photo closet"></div></button>
+        <button class="homecard blue" data-screen="outfit"><div class="head"><div class="circle">♙</div><div><h3>Nieuwe outfit</h3><p>Stel een outfit samen</p></div></div><div class="photo design"></div></button>
+        <button class="homecard pink" data-screen="saved"><div class="head"><div class="circle">♡</div><div><h3>Outfits</h3><p>Bewaar en bekijk je combinaties</p></div></div><div class="photo outfits"></div></button>
+        <button class="homecard yellow" data-screen="wish"><div class="head"><div class="circle">☆</div><div><h3>Nieuwe aankoop</h3><p>Bewaar twijfels en ideeën</p></div></div><div class="photo purchase"></div></button>
       </div>
 
       <div class="section"><h2>Laatst gebruikt</h2><button class="link">Bekijk alles ›</button></div>
@@ -79,12 +67,12 @@
     <section id="outfit" class="screen">
       <div class="panel bluepanel">
         <h2>Nieuwe outfit</h2>
-        <p>Tik op kledingstukken in de rijen hieronder.</p>
-        <div class="preview">
-          <div class="slot" id="slot-tops">Top</div>
-          <div class="slot" id="slot-bottoms">Onderstuk</div>
-          <div class="slot" id="slot-shoes">Schoenen</div>
-          <div class="slot" id="slot-bags">Tas</div>
+        <p>Kies per rij een kledingstuk. De gekozen stukken worden hieronder als outfit opgebouwd.</p>
+        <div class="stacked-outfit">
+          <div class="stack-slot" id="stack-tops">Top</div>
+          <div class="stack-slot" id="stack-bottoms">Onderstuk</div>
+          <div class="stack-slot" id="stack-shoes">Schoenen</div>
+          <div class="stack-slot" id="stack-bags">Tas</div>
         </div>
         <div class="actions">
           <button class="btn" id="saveOutfitBtn">Outfit bewaren</button>
@@ -107,7 +95,7 @@
     </section>
 
     <section id="settings" class="screen">
-      <div class="panel"><h2>Instellingen</h2><p>Beheer hier je kledingcategorieën. Dit staat niet meer als hoofdkaart op Home.</p></div>
+      <div class="panel"><h2>Instellingen</h2><p>Beheer hier je kledingcategorieën: naam wijzigen, volgorde aanpassen of verwijderen.</p></div>
       <button class="btn" id="addCategoryBtn">Nieuwe categorie toevoegen</button>
       <div class="spacer"></div>
       <div id="categoryList"></div>

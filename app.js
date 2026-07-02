@@ -14,43 +14,32 @@ let db;
 
 function openDB(){
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('kleerkast_v09_db', 1);
+    const req = indexedDB.open('kleerkast_v10_db', 1);
     req.onupgradeneeded = e => {
       const database = e.target.result;
-      if(!database.objectStoreNames.contains('state')){
-        database.createObjectStore('state', {keyPath:'key'});
-      }
+      if(!database.objectStoreNames.contains('state')) database.createObjectStore('state', {keyPath:'key'});
     };
     req.onsuccess = e => resolve(e.target.result);
     req.onerror = e => reject(e);
   });
 }
-
 function getState(){
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const tx = db.transaction('state', 'readonly');
-    const store = tx.objectStore('state');
-    const req = store.get('app');
+    const req = tx.objectStore('state').get('app');
     req.onsuccess = () => resolve(req.result ? req.result.value : null);
     req.onerror = () => resolve(null);
   });
 }
-
 function setState(){
   return new Promise((resolve, reject) => {
     const tx = db.transaction('state', 'readwrite');
-    const store = tx.objectStore('state');
-    const req = store.put({key:'app', value:data});
+    const req = tx.objectStore('state').put({key:'app', value:data});
     req.onsuccess = () => resolve(true);
     req.onerror = () => reject(req.error);
   });
 }
-
-async function save(){
-  try { await setState(); return true; }
-  catch(e){ alert('Opslaan lukte niet.'); return false; }
-}
-
+async function save(){ try{ await setState(); return true; } catch(e){ alert('Opslaan lukte niet.'); return false; } }
 function initData(loaded){
   data = loaded || {};
   if(!data.categories) data.categories = defaultCats.map(c => ({id:c[0], name:c[1], color:c[2]}));
@@ -58,7 +47,6 @@ function initData(loaded){
   if(!data.wishitems) data.wishitems = [];
   if(!data.outfits) data.outfits = [];
 }
-
 function resizeImage(file, maxSize = 900, quality = 0.7){
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -69,8 +57,7 @@ function resizeImage(file, maxSize = 900, quality = 0.7){
       img.onload = () => {
         let w = img.width, h = img.height;
         const scale = Math.min(1, maxSize / Math.max(w,h));
-        w = Math.round(w * scale);
-        h = Math.round(h * scale);
+        w = Math.round(w * scale); h = Math.round(h * scale);
         const canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
@@ -81,7 +68,6 @@ function resizeImage(file, maxSize = 900, quality = 0.7){
     reader.readAsDataURL(file);
   });
 }
-
 function show(screen){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(screen).classList.add('active');
@@ -89,86 +75,64 @@ function show(screen){
   window.scrollTo(0,0);
   render();
 }
-
-function pick(cat){
-  const input = document.getElementById('file-' + cat);
-  if(input) input.click();
-}
-
+function pick(cat){ const input = document.getElementById('file-' + cat); if(input) input.click(); }
 async function handleFile(cat, file){
   if(!file) return;
   try{
     const src = await resizeImage(file);
     data[cat].push({id:Date.now()+Math.random(), src});
-    await save();
-    render();
-  } catch(e){
-    alert('Foto toevoegen lukte niet. Probeer een andere foto.');
-  }
+    await save(); render();
+  } catch(e){ alert('Foto toevoegen lukte niet. Probeer een andere foto.'); }
 }
-
 async function removeItem(cat, id){
   const used = data.outfits.filter(o => Object.values(o.items).includes(id));
   if(used.length && !confirm('Dit kledingstuk zit in ' + used.length + ' outfit(s). Toch verwijderen?')) return;
   data[cat] = data[cat].filter(x => x.id !== id);
   Object.keys(selected).forEach(k => { if(selected[k] === id) selected[k] = null; });
-  await save();
-  render();
+  await save(); render();
 }
-
 function select(cat, id, src){
   if(!(cat in selected)) return;
   selected[cat] = id;
-  document.getElementById('slot-' + cat).innerHTML = '<img src="' + src + '">';
+  const slot = document.getElementById('stack-' + cat);
+  if(slot) slot.innerHTML = '<img src="' + src + '">';
 }
-
 function clearSlots(){
   selected = {tops:null, bottoms:null, shoes:null, bags:null};
   const labels = {tops:'Top', bottoms:'Onderstuk', shoes:'Schoenen', bags:'Tas'};
-  Object.keys(labels).forEach(c => document.getElementById('slot-' + c).textContent = labels[c]);
+  Object.keys(labels).forEach(c => document.getElementById('stack-' + c).textContent = labels[c]);
 }
-
 async function saveOutfit(){
-  if(!Object.values(selected).some(Boolean)){
-    alert('Kies eerst minstens één kledingstuk.');
-    return;
-  }
+  if(!Object.values(selected).some(Boolean)){ alert('Kies eerst minstens één kledingstuk.'); return; }
   data.outfits.push({id:Date.now(), date:new Date().toLocaleDateString('nl-BE'), items:{...selected}});
-  await save();
-  alert('Outfit bewaard');
-  render();
+  await save(); alert('Outfit bewaard'); render();
 }
-
 function findImg(id){
-  for(const c of data.categories){
-    for(const item of data[c.id]){
-      if(item.id === id) return item.src;
-    }
-  }
+  for(const c of data.categories) for(const item of data[c.id]) if(item.id === id) return item.src;
   return null;
 }
-
 function card(cat, item, selectable){
   const d = document.createElement('div');
   d.className = 'piece';
   const img = document.createElement('img');
   img.src = item.src;
   d.appendChild(img);
-  if(selectable) img.onclick = () => select(cat, item.id, item.src);
+  if(selectable) img.onclick = () => {
+    select(cat, item.id, item.src);
+    document.querySelectorAll('[data-catrow="'+cat+'"] .piece').forEach(p => p.classList.remove('active'));
+    d.classList.add('active');
+  };
   const x = document.createElement('button');
   x.className = 'delete';
   x.textContent = 'Verwijder';
-  x.onclick = e => {
-    e.stopPropagation();
-    removeItem(cat, item.id);
-  };
+  x.onclick = e => { e.stopPropagation(); removeItem(cat, item.id); };
   d.appendChild(x);
   return d;
 }
-
 function row(cat, selectable){
   const r = document.createElement('div');
   r.className = 'row';
+  r.dataset.catrow = cat;
   if(!data[cat] || !data[cat].length){
     const e = document.createElement('div');
     e.className = 'empty';
@@ -179,7 +143,6 @@ function row(cat, selectable){
   }
   return r;
 }
-
 function render(){
   const closet = document.getElementById('closetList');
   closet.innerHTML = '';
@@ -195,13 +158,8 @@ function render(){
     closet.appendChild(s);
 
     const inp = document.createElement('input');
-    inp.type = 'file';
-    inp.accept = 'image/*';
-    inp.id = 'file-' + c.id;
-    inp.onchange = e => {
-      handleFile(c.id, e.target.files[0]);
-      e.target.value = '';
-    };
+    inp.type = 'file'; inp.accept = 'image/*'; inp.id = 'file-' + c.id;
+    inp.onchange = e => { handleFile(c.id, e.target.files[0]); e.target.value = ''; };
     closet.appendChild(inp);
     closet.appendChild(row(c.id, false));
   });
@@ -218,87 +176,82 @@ function render(){
     outfit.appendChild(row(id, true));
   });
 
+  renderCategories();
+  renderWish();
+  renderSaved();
+  renderRecent();
+}
+function renderCategories(){
   const categoryList = document.getElementById('categoryList');
   categoryList.innerHTML = '';
-  data.categories.forEach(c => {
+  data.categories.forEach((c, idx) => {
     const div = document.createElement('div');
     div.className = 'catrow';
-    div.innerHTML = '<div class="catleft"><div class="dot" style="background:' + c.color + '"></div>' + c.name + '</div><span>•••</span>';
+    const left = document.createElement('div');
+    left.className = 'catleft';
+    left.innerHTML = '<div class="dot" style="background:' + c.color + '"></div>' + c.name;
+    const actions = document.createElement('div');
+    actions.className = 'cat-actions';
+    const rename = document.createElement('button'); rename.className='mini'; rename.textContent='Naam'; rename.onclick=()=>renameCategory(c.id);
+    const up = document.createElement('button'); up.className='mini'; up.textContent='↑'; up.onclick=()=>moveCategory(idx,-1);
+    const down = document.createElement('button'); down.className='mini'; down.textContent='↓'; down.onclick=()=>moveCategory(idx,1);
+    const del = document.createElement('button'); del.className='mini'; del.textContent='Verwijder'; del.onclick=()=>deleteCategory(c.id);
+    actions.append(rename,up,down,del);
+    div.append(left, actions);
     categoryList.appendChild(div);
   });
-
+}
+async function renameCategory(id){
+  const c = data.categories.find(x=>x.id===id);
+  const name = prompt('Nieuwe naam?', c.name);
+  if(!name) return;
+  c.name = name;
+  await save(); render();
+}
+async function moveCategory(idx, dir){
+  const newIdx = idx + dir;
+  if(newIdx < 0 || newIdx >= data.categories.length) return;
+  const temp = data.categories[idx];
+  data.categories[idx] = data.categories[newIdx];
+  data.categories[newIdx] = temp;
+  await save(); render();
+}
+async function deleteCategory(id){
+  const c = data.categories.find(x=>x.id===id);
+  if(!c) return;
+  if((data[id] || []).length && !confirm('Deze categorie bevat foto’s. Toch verwijderen?')) return;
+  data.categories = data.categories.filter(x=>x.id!==id);
+  delete data[id];
+  await save(); render();
+}
+function renderWish(){
   const wish = document.getElementById('wishRow');
   wish.innerHTML = '';
   if(!data.wishitems.length){
-    const e = document.createElement('div');
-    e.className = 'empty';
-    e.textContent = 'Nog geen foto’s';
-    wish.appendChild(e);
-  } else {
-    data.wishitems.forEach(i => wish.appendChild(card('wishitems', i, false)));
-  }
-
+    const e = document.createElement('div'); e.className='empty'; e.textContent='Nog geen foto’s'; wish.appendChild(e);
+  } else data.wishitems.forEach(i => wish.appendChild(card('wishitems', i, false)));
+}
+function renderSaved(){
   const saved = document.getElementById('savedList');
   saved.innerHTML = '';
   if(!data.outfits.length){
-    const em = document.createElement('div');
-    em.className = 'empty';
-    em.textContent = 'Nog geen outfits bewaard';
-    saved.appendChild(em);
-  } else {
-    data.outfits.forEach((o, i) => {
-      const box = document.createElement('div');
-      box.className = 'panel';
-      box.innerHTML = '<h2>Outfit ' + (i+1) + '</h2><p>Bewaard op ' + o.date + '</p>';
-      const rr = document.createElement('div');
-      rr.className = 'row';
-      Object.values(o.items).forEach(id => {
-        const src = findImg(id);
-        if(src){
-          const it = document.createElement('div');
-          it.className = 'piece';
-          it.innerHTML = '<img src="' + src + '">';
-          rr.appendChild(it);
-        }
-      });
-      box.appendChild(rr);
-      saved.appendChild(box);
-    });
-  }
-
+    const em = document.createElement('div'); em.className='empty'; em.textContent='Nog geen outfits bewaard'; saved.appendChild(em);
+  } else data.outfits.forEach((o,i)=>{
+    const box = document.createElement('div'); box.className='panel'; box.innerHTML='<h2>Outfit '+(i+1)+'</h2><p>Bewaard op '+o.date+'</p>';
+    const rr = document.createElement('div'); rr.className='row';
+    Object.values(o.items).forEach(id=>{ const src=findImg(id); if(src){ const it=document.createElement('div'); it.className='piece active'; it.innerHTML='<img src="'+src+'">'; rr.appendChild(it); }});
+    box.appendChild(rr); saved.appendChild(box);
+  });
+}
+function renderRecent(){
   const recent = document.getElementById('recentRow');
   recent.innerHTML = '';
   const imgs = [];
-  data.outfits.slice(-4).forEach(o => Object.values(o.items).forEach(id => {
-    const src = findImg(id);
-    if(src) imgs.push(src);
-  }));
+  data.outfits.slice(-4).forEach(o => Object.values(o.items).forEach(id => { const src=findImg(id); if(src) imgs.push(src); }));
   if(!imgs.length){
-    ['Werk outfit','Weekend','Date night','Zondag casual'].forEach(t => {
-      const e = document.createElement('div');
-      e.className = 'empty';
-      e.style.minWidth = '220px';
-      e.textContent = t;
-      recent.appendChild(e);
-    });
-  } else {
-    imgs.slice(0,4).forEach(src => {
-      const it = document.createElement('div');
-      it.className = 'piece';
-      it.innerHTML = '<img src="' + src + '">';
-      recent.appendChild(it);
-    });
-  }
-
-  const wishInput = document.getElementById('file-wishitems');
-  if(wishInput){
-    wishInput.onchange = e => {
-      handleFile('wishitems', e.target.files[0]);
-      e.target.value = '';
-    };
-  }
+    ['Werk outfit','Weekend','Date night','Zondag casual'].forEach(t=>{ const e=document.createElement('div'); e.className='empty'; e.style.minWidth='220px'; e.textContent=t; recent.appendChild(e); });
+  } else imgs.slice(0,4).forEach(src=>{ const it=document.createElement('div'); it.className='piece active'; it.innerHTML='<img src="'+src+'">'; recent.appendChild(it); });
 }
-
 async function addCategory(){
   const name = prompt('Naam van nieuwe categorie?');
   if(!name) return;
@@ -306,14 +259,11 @@ async function addCategory(){
   const colors = ['#d9ecff','#dcf4e6','#ffe1e9','#fff0c9','#eadfff','#f1dfd2'];
   data.categories.push({id, name, color:colors[data.categories.length % colors.length]});
   data[id] = [];
-  await save();
-  render();
+  await save(); render();
 }
-
 async function init(){
   db = await openDB();
-  const loaded = await getState();
-  initData(loaded);
+  initData(await getState());
   document.querySelectorAll('[data-screen]').forEach(b => b.onclick = () => show(b.dataset.screen));
   document.getElementById('settingsBtn').onclick = () => show('settings');
   document.getElementById('toggleAssistant').onclick = function(){
@@ -327,5 +277,4 @@ async function init(){
   document.getElementById('addCategoryFromClosetBtn').onclick = addCategory;
   render();
 }
-
 init();
